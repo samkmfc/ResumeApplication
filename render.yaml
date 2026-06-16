@@ -1,0 +1,14 @@
+# Render 蓝图：在 Render 点 New → Blueprint，选你的 GitHub 仓库即可自动按此配置部署
+services:
+  - type: web
+    name: resume-polish
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    envVars:
+      - key: LLM_API_KEY
+        sync: false                 # 密钥：在 Render 后台手动填，不写进仓库
+      - key: LLM_BASE_URL
+        value: https://api.cisct.xyz
+      - key: LLM_MODEL
+        value: claude-opus-4-8

@@ -1,0 +1,21 @@
+# 依赖与构建产物
+**/__pycache__/
+*.pyc
+**/.venv/
+**/node_modules/
+**/dist/
+**/.pytest_cache/
+
+# 密钥与本地环境（务必不要提交）
+.env
+**/.env
+*.local
+
+# 运行时数据
+**/_uploads/
+**/*.log
+
+# 编辑器
+.vscode/
+.idea/
+.DS_Store

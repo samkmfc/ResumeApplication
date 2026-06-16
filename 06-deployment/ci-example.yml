@@ -1,0 +1,44 @@
+# GitHub Actions CI 样例
+# 接入方式：复制到仓库 .github/workflows/ci.yml
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  backend-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install backend deps
+        working-directory: 04-development/backend
+        run: pip install -r requirements.txt pytest
+      - name: Run tests
+        working-directory: 05-testing
+        run: pytest -q
+
+  frontend-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Build frontend
+        working-directory: 04-development/frontend
+        run: |
+          npm ci
+          npm run build
+
+  # docker-build:
+  #   needs: [backend-test, frontend-build]
+  #   if: github.ref == 'refs/heads/main'
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - run: docker compose -f 06-deployment/docker-compose.yml build

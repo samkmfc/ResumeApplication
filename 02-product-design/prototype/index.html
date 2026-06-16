@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI 简历润色 · 高保真原型</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --card: #fff; --ink: #1a1f29; --sub: #6b7280;
+    --line: #e6e8ec; --brand: #2f6df0; --brand-soft: #eaf1ff;
+    --good: #1f9d57; --good-soft: #e8f7ef; --warn: #d97706;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font: 14px/1.6 -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+         background: var(--bg); color: var(--ink); }
+  header { background: var(--card); border-bottom: 1px solid var(--line);
+           padding: 14px 28px; display: flex; align-items: center; gap: 12px; }
+  header .logo { width: 30px; height: 30px; border-radius: 8px;
+                 background: linear-gradient(135deg, #2f6df0, #6a9bff); }
+  header h1 { font-size: 16px; }
+  header .tag { font-size: 12px; color: var(--sub); margin-left: auto; }
+  .wrap { max-width: 1180px; margin: 22px auto; padding: 0 20px; }
+  .steps { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+  .step { font-size: 12px; padding: 6px 12px; border-radius: 20px;
+          background: #fff; border: 1px solid var(--line); color: var(--sub); }
+  .step.active { background: var(--brand-soft); color: var(--brand); border-color: #cfe0ff; font-weight: 600; }
+  .grid { display: grid; grid-template-columns: 320px 1fr; gap: 18px; }
+  .card { background: var(--card); border: 1px solid var(--line);
+          border-radius: 12px; padding: 18px; }
+  .card h2 { font-size: 14px; margin-bottom: 12px; }
+  .drop { border: 2px dashed #cdd3dc; border-radius: 10px; padding: 26px 14px;
+          text-align: center; color: var(--sub); cursor: pointer; transition: .2s; }
+  .drop:hover { border-color: var(--brand); background: var(--brand-soft); }
+  .drop b { color: var(--brand); }
+  textarea { width: 100%; min-height: 120px; border: 1px solid var(--line);
+             border-radius: 8px; padding: 10px; font: inherit; resize: vertical; }
+  .seg { display: flex; gap: 6px; margin: 12px 0; }
+  .seg button { flex: 1; padding: 7px; border: 1px solid var(--line); background: #fff;
+                border-radius: 8px; cursor: pointer; font-size: 12px; }
+  .seg button.on { background: var(--brand); color: #fff; border-color: var(--brand); }
+  .btn { width: 100%; padding: 11px; border: 0; border-radius: 8px; cursor: pointer;
+         background: var(--brand); color: #fff; font-size: 14px; font-weight: 600; }
+  .btn:disabled { opacity: .5; cursor: not-allowed; }
+  .btn.ghost { background: #fff; color: var(--ink); border: 1px solid var(--line); }
+  .meta { font-size: 12px; color: var(--sub); margin-top: 10px; }
+  .diff-row { border: 1px solid var(--line); border-radius: 10px; margin-bottom: 12px; overflow: hidden; }
+  .diff-head { background: #fafbfc; padding: 8px 12px; font-size: 12px; color: var(--sub);
+               display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--line); }
+  .diff-cols { display: grid; grid-template-columns: 1fr 1fr; }
+  .diff-cols .col { padding: 12px; font-size: 13px; }
+  .diff-cols .col.orig { border-right: 1px solid var(--line); color: #8a8f99; text-decoration: line-through; text-decoration-color:#d7b3b3; }
+  .diff-cols .col.new { background: var(--good-soft); }
+  .reason { padding: 10px 12px; font-size: 12px; color: var(--warn);
+            background: #fffaf0; border-top: 1px solid var(--line); }
+  .acts { padding: 8px 12px; display: flex; gap: 8px; border-top: 1px solid var(--line); }
+  .acts button { font-size: 12px; padding: 5px 12px; border-radius: 6px; border: 1px solid var(--line);
+                 background: #fff; cursor: pointer; }
+  .acts .ok { color: var(--good); border-color: #bfe6cf; }
+  .acts .ok.sel { background: var(--good); color:#fff; }
+  .acts .no.sel { background:#f3f4f6; }
+  .stream { white-space: pre-wrap; font-size: 13px; min-height: 80px; }
+  .cursor { display:inline-block; width:7px; height:15px; background: var(--brand);
+            animation: blink 1s steps(2) infinite; vertical-align: text-bottom; }
+  @keyframes blink { 0%,50%{opacity:1} 50.1%,100%{opacity:0} }
+  .pill { font-size: 11px; padding: 2px 8px; border-radius: 10px; background: var(--brand-soft); color: var(--brand); }
+  .hint { font-size: 12px; color: var(--sub); margin-top: 6px; }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo"></div>
+  <h1>AI 智能求职辅导 · 简历润色</h1>
+  <span class="tag">高保真原型 · 首字响应 &lt;1s · 前后端分离</span>
+</header>
+
+<div class="wrap">
+  <div class="steps" id="steps">
+    <div class="step active" data-s="upload">1 上传简历</div>
+    <div class="step" data-s="target">2 目标岗位</div>
+    <div class="step" data-s="polish">3 AI 润色</div>
+    <div class="step" data-s="review">4 对比采纳</div>
+    <div class="step" data-s="export">5 导出下载</div>
+  </div>
+
+  <div class="grid">
+    <!-- 左：输入 -->
+    <div>
+      <div class="card">
+        <h2>① 上传简历</h2>
+        <div class="drop" id="drop">
+          <p>拖拽或 <b>点击上传</b></p>
+          <p class="hint">支持 PDF / DOCX，≤ 10MB</p>
+        </div>
+        <div class="meta" id="fileMeta"></div>
+      </div>
+
+      <div class="card" style="margin-top:14px">
+        <h2>② 目标岗位（可选）</h2>
+        <textarea id="jd" placeholder="粘贴目标岗位 JD，AI 将对齐关键词与能力项…"></textarea>
+        <div class="seg" id="seg">
+          <button class="on" data-i="polish">综合润色</button>
+          <button data-i="target">岗位定向</button>
+          <button data-i="grammar">仅语法</button>
+        </div>
+        <button class="btn" id="run">开始 AI 润色</button>
+        <div class="meta">大模型 API 仅在后端调用，前端不持有密钥。</div>
+      </div>
+    </div>
+
+    <!-- 右：流式 + 对比 -->
+    <div>
+      <div class="card">
+        <h2>③ 润色结果 <span class="pill" id="stat">待开始</span></h2>
+        <div class="stream" id="stream">上传简历并点击「开始 AI 润色」后，结果将在此处流式呈现…</div>
+      </div>
+
+      <div class="card" style="margin-top:14px">
+        <h2>④ 修改对比与采纳 <span class="hint" id="adopted"></span></h2>
+        <div id="diffs"><div class="hint">润色完成后展示逐处修改对比。</div></div>
+        <button class="btn" id="export" disabled style="margin-top:6px">⑤ 导出润色后简历（PDF）</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // —— 纯前端模拟，用于评审与前端开发对照 ——
+  const $ = (s) => document.querySelector(s);
+  let intent = "polish";
+  const DEMO = `【个人简介】\n资深产品经理，主导 AI 求职辅导 Agent 平台从 0 到 1，1 个月跑通 MVP 闭环，交付首字响应 <1s 的高保真可交互 Demo。\n\n【工作经历】\nABC 科技 | 产品经理 | 2022-2024\n· 主导清洗与结构化 5w+ 条多源岗位 JD 与面经数据，搭建 RAG 垂直知识库。\n· 独立输出高质量 PRD 与高保真原型，定义 Agent 意图识别路由与多轮对话状态机。\n· 确立前后端分离架构，界定大模型 API 数据交互边界，[请补充数据] 提升投递转化率。\n\n【技能】\nAxure、SQL、Prompt 工程、RAG、系统设计`;
+
+  const DIFFS = [
+    { section: "工作经历", original: "负责数据处理", polished: "主导清洗与结构化 5w+ 条多源岗位 JD 与面经数据", reason: "弱动词「负责」→「主导」，并量化数据规模，凸显工作量与产出。" },
+    { section: "个人简介", original: "做过一个 AI 项目", polished: "主导 AI 求职辅导 Agent 平台从 0 到 1，1 个月跑通 MVP 闭环", reason: "补充角色、周期与成果，符合 STAR 结构，去口语化。" },
+    { section: "工作经历", original: "提升了转化率", polished: "[请补充数据] 提升投递转化率", reason: "缺少具体数字，使用占位符提示补充，不杜撰数据（防幻觉）。" },
+  ];
+
+  $("#drop").onclick = () => {
+    $("#fileMeta").innerHTML = "✅ 已上传：<b>我的简历.pdf</b> · 解析成功（结构化 5 个模块）";
+    setStep("target");
+  };
+  $("#seg").onclick = (e) => {
+    if (e.target.tagName !== "BUTTON") return;
+    [...$("#seg").children].forEach(b => b.classList.remove("on"));
+    e.target.classList.add("on"); intent = e.target.dataset.i;
+  };
+
+  function setStep(s) {
+    [...$("#steps").children].forEach(el => el.classList.toggle("active", el.dataset.s === s));
+  }
+
+  $("#run").onclick = async () => {
+    setStep("polish");
+    $("#stat").textContent = "生成中"; $("#run").disabled = true;
+    const box = $("#stream"); box.innerHTML = "";
+    const cur = document.createElement("span"); cur.className = "cursor";
+    box.appendChild(cur);
+    // 模拟首字 <1s + 流式
+    await new Promise(r => setTimeout(r, 400));
+    for (const ch of DEMO) {
+      box.insertBefore(document.createTextNode(ch), cur);
+      await new Promise(r => setTimeout(r, 8));
+    }
+    cur.remove();
+    $("#stat").textContent = "已完成";
+    renderDiffs(); setStep("review"); $("#run").disabled = false;
+  };
+
+  function renderDiffs() {
+    const wrap = $("#diffs"); wrap.innerHTML = "";
+    DIFFS.forEach((d, i) => {
+      const row = document.createElement("div");
+      row.className = "diff-row";
+      row.innerHTML = `
+        <div class="diff-head"><span class="pill">${d.section}</span> 第 ${i+1} 处修改</div>
+        <div class="diff-cols">
+          <div class="col orig">${d.original}</div>
+          <div class="col new">${d.polished}</div>
+        </div>
+        <div class="reason">💡 ${d.reason}</div>
+        <div class="acts">
+          <button class="ok sel" data-i="${i}" data-v="1">✓ 采纳</button>
+          <button class="no" data-i="${i}" data-v="0">↩ 保留原文</button>
+        </div>`;
+      wrap.appendChild(row);
+    });
+    wrap.onclick = (e) => {
+      if (e.target.tagName !== "BUTTON") return;
+      const acts = e.target.parentElement;
+      [...acts.children].forEach(b => b.classList.remove("sel"));
+      e.target.classList.add("sel");
+      updateAdopted();
+    };
+    $("#export").disabled = false;
+    updateAdopted(); setStep("export");
+  }
+
+  function updateAdopted() {
+    const ok = [...document.querySelectorAll(".acts .ok.sel")].length;
+    $("#adopted").textContent = `已采纳 ${ok}/${DIFFS.length} 处`;
+  }
+
+  $("#export").onclick = () => {
+    setStep("export");
+    alert("（原型）导出润色后简历为 PDF —— 实际由后端 /api/export 生成并下载。");
+  };
+</script>
+</body>
+</html>

@@ -1,0 +1,65 @@
+:root {
+  --bg: #f6f7f9; --card: #fff; --ink: #1a1f29; --sub: #6b7280;
+  --line: #e6e8ec; --brand: #2f6df0; --brand-soft: #eaf1ff;
+  --good: #1f9d57; --good-soft: #e8f7ef; --warn: #d97706;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font: 14px/1.6 -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+       background: var(--bg); color: var(--ink); }
+header { background: var(--card); border-bottom: 1px solid var(--line);
+         padding: 14px 28px; display: flex; align-items: center; gap: 12px; }
+header .logo { width: 30px; height: 30px; border-radius: 8px;
+               background: linear-gradient(135deg, #2f6df0, #6a9bff); }
+header h1 { font-size: 16px; }
+header .tag { font-size: 12px; color: var(--sub); margin-left: auto; }
+.wrap { max-width: 1180px; margin: 22px auto; padding: 0 20px; }
+.steps { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+.step { font-size: 12px; padding: 6px 12px; border-radius: 20px;
+        background: #fff; border: 1px solid var(--line); color: var(--sub); }
+.step.active { background: var(--brand-soft); color: var(--brand);
+               border-color: #cfe0ff; font-weight: 600; }
+.error { background: #fff1f0; border: 1px solid #ffccc7; color: #cf1322;
+         padding: 10px 14px; border-radius: 8px; margin-bottom: 14px; font-size: 13px; }
+.grid { display: grid; grid-template-columns: 340px 1fr; gap: 18px; }
+@media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+.card { background: var(--card); border: 1px solid var(--line);
+        border-radius: 12px; padding: 18px; }
+.card h2 { font-size: 14px; margin-bottom: 12px; }
+.drop { display: block; border: 2px dashed #cdd3dc; border-radius: 10px;
+        padding: 26px 14px; text-align: center; color: var(--sub);
+        cursor: pointer; transition: .2s; }
+.drop:hover { border-color: var(--brand); background: var(--brand-soft); }
+.drop b { color: var(--brand); }
+textarea { width: 100%; min-height: 120px; border: 1px solid var(--line);
+           border-radius: 8px; padding: 10px; font: inherit; resize: vertical; }
+.seg { display: flex; gap: 6px; margin: 12px 0; }
+.seg button { flex: 1; padding: 7px; border: 1px solid var(--line);
+              background: #fff; border-radius: 8px; cursor: pointer; font-size: 12px; }
+.seg button.on { background: var(--brand); color: #fff; border-color: var(--brand); }
+.btn { width: 100%; padding: 11px; border: 0; border-radius: 8px; cursor: pointer;
+       background: var(--brand); color: #fff; font-size: 14px; font-weight: 600; }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+.meta { font-size: 12px; color: var(--sub); margin-top: 10px; }
+.hint { font-size: 12px; color: var(--sub); font-weight: 400; }
+.pill { font-size: 11px; padding: 2px 8px; border-radius: 10px;
+        background: var(--brand-soft); color: var(--brand); }
+.stream { white-space: pre-wrap; font-size: 13px; min-height: 80px; }
+.cursor { display: inline-block; width: 7px; height: 15px; background: var(--brand);
+          animation: blink 1s steps(2) infinite; vertical-align: text-bottom; }
+@keyframes blink { 0%, 50% { opacity: 1; } 50.1%, 100% { opacity: 0; } }
+.diff-row { border: 1px solid var(--line); border-radius: 10px;
+            margin-bottom: 12px; overflow: hidden; }
+.diff-head { background: #fafbfc; padding: 8px 12px; font-size: 12px; color: var(--sub);
+             display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--line); }
+.diff-cols { display: grid; grid-template-columns: 1fr 1fr; }
+.diff-cols .col { padding: 12px; font-size: 13px; }
+.diff-cols .col.orig { border-right: 1px solid var(--line); color: #8a8f99;
+                       text-decoration: line-through; text-decoration-color: #d7b3b3; }
+.diff-cols .col.new { background: var(--good-soft); }
+.reason { padding: 10px 12px; font-size: 12px; color: var(--warn);
+          background: #fffaf0; border-top: 1px solid var(--line); }
+.acts { padding: 8px 12px; display: flex; gap: 8px; border-top: 1px solid var(--line); }
+.acts button { font-size: 12px; padding: 5px 12px; border-radius: 6px;
+               border: 1px solid var(--line); background: #fff; cursor: pointer; }
+.acts .ok.sel { background: var(--good); color: #fff; border-color: var(--good); }
+.acts .no.sel { background: #f3f4f6; }
